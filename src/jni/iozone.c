@@ -308,6 +308,18 @@ THISVERSION,
 #endif
 #endif
 
+#if defined(android)
+#ifndef O_RSYNC
+#define O_RSYNC O_SYNC
+#endif
+
+__attribute__((weak)) int pthread_setaffinity_np(pthread_t thread, size_t cpusetsize,
+                                  const cpu_set_t *cpuset)
+{
+  return sched_setaffinity(pthread_gettid_np(thread), cpusetsize, cpuset);
+}
+#endif
+
 #if ((defined(solaris) && defined(__LP64__)) || defined(__s390x__))
 /* If we are building for 64-bit Solaris, all functions that return pointers
  * must be declared before they are used; otherwise the compiler will assume
